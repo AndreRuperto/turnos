@@ -1,0 +1,369 @@
+<!doctype html><html lang="pt-BR"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<title>Anomalias nas urnas — Eleições 2026</title>
+<meta name="description" content="Todas as situações matematicamente estranhas na votação para Presidente, seção por seção, nos dois turnos de 2026 — com quantas seriam esperadas por acaso e o que costuma explicá-las.">
+<link rel="icon" href="assets/favicon/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="assets/favicon/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/favicon-180.png">
+</head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
+<link rel="stylesheet" href="css/shared.css">
+<style>
+.tests{display:flex;flex-direction:column;gap:14px}
+.test{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--neutral);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.test.zero{border-left-color:#2e8b57}
+.test.alto{border-left-color:var(--accent)}
+.test-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.test-head h3{flex:1 1 260px}
+.test-n{font-family:var(--serif);font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.test-n small{font-family:var(--sans);font-size:12px;font-weight:400;color:var(--muted);margin-left:4px}
+.test .exp{font-size:13px;color:var(--muted)}
+.test .why{background:var(--neutral-soft);border-radius:8px;padding:10px 12px;font-size:14px}
+.test .why b{font-weight:600}
+.test details>summary{font-size:13px;color:var(--accent);font-weight:600;cursor:pointer}
+.test table{font-size:12px}
+.test td,.test th{white-space:nowrap}
+.charts{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.chart h3{font-size:16px}
+.chart .small{font-size:12px;color:var(--muted)}
+.chart svg{width:100%;height:auto;display:block}
+.chart canvas{width:100%;aspect-ratio:1;image-rendering:pixelated;border:1px solid var(--line);border-radius:4px;background:var(--bg)}
+.pill{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--neutral-soft);color:var(--muted)}
+.pill.ok{background:#dff0e5;color:#1f6b40}
+.pill.at{background:var(--warn-bg);color:var(--warn-fg)}
+:root[data-theme="dark"] .pill.ok{background:#173524;color:#8fd6aa}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pill.ok{background:#173524;color:#8fd6aa}}
+.axis{font-size:10px;fill:var(--muted)}
+#caso .card p{text-align:left;margin-top:6px}
+</style>
+
+<nav class="topnav" aria-label="Seções"><div><a href="#" class="nav-brand" aria-label="turnos"><img class="logo-light" src="assets/logo/turnos-horizontal-claro.svg" alt="turnos" height="22"><img class="logo-dark" src="assets/logo/turnos-horizontal-escuro.svg" alt="" height="22"></a><button class="nav-arr nav-arr-l" aria-label="Anterior" hidden>‹</button><div class="nav-links"><a href="#resumo">Resumo</a><a href="#conferir">Para conferir</a><a href="#caso">Caso investigado</a><a href="#campos">Campos (RJ)</a><a href="#como-ler">Como ler</a><a href="#integridade">Integridade</a><a href="#extremos">Extremos</a><a href="#viradas">Viradas</a><a href="#digitos">Dígitos</a><a href="#fingerprint">Fingerprint</a><a href="#ressalvas">Ressalvas</a><a href="analise.html" style="background:var(--accent);color:#fff;border-radius:99px">Análise</a><a href="index.html" style="background:var(--accent);color:#fff;border-radius:99px">1º turno</a><a href="2turno.html" style="background:var(--accent);color:#fff;border-radius:99px">2º turno</a></div><button class="nav-arr nav-arr-r" aria-label="Próximo" hidden>›</button><button class="theme-toggle" aria-label="Alternar tema" title="Alternar tema">☀</button></div></nav>
+<script src="js/shared.js"></script>
+<script src="js/tracker.js"></script>
+
+<div class="wrap">
+
+<header>
+  <div class="kicker">Auditoria estatística · Boletins de Urna</div>
+  <h1>Tudo o que parece estranho nas urnas, e quanto disso é estranho de verdade</h1>
+  <p class="sub">Passamos todos os testes matemáticos comuns em auditoria de eleições pelas <span id="h-secoes">—</span> seções que votaram para Presidente nos dois turnos de 2026. Cada número abaixo vem direto do Boletim de Urna (BU) de cada seção, baixado do TSE. Para cada achado mostramos quantos casos existem, quantos seriam esperados por puro acaso quando dá para calcular, e o que costuma explicar esse tipo de caso.</p>
+</header>
+
+<section id="resumo">
+  <h2>Resumo</h2>
+  <div class="grid" id="resumo-grid"></div>
+  <p id="resumo-txt"></p>
+</section>
+
+<section id="conferir">
+  <h2>As seções para conferir primeiro</h2>
+  <p>Juntando os testes de virada, estas são as seções com a mudança mais difícil de explicar entre um turno e outro. Em todas, o local de votação é o mesmo nos dois turnos. Quando o número de eleitores aptos mudou, a mudança aparece na última coluna: se for grande, a virada pode ser só um eleitorado diferente. Não quer dizer que algo errado aconteceu: são os casos em que vale abrir o BU e o log da urna.</p>
+  <div class="scroll"><table id="conf-tab"><thead><tr><th>UF</th><th>Município</th><th>Zona</th><th>Seção</th><th class="n">Votaram 1º</th><th class="n">Lula 1º</th><th class="n">Flávio 1º</th><th class="n">Votaram 2º</th><th class="n">Lula 2º</th><th class="n">Flávio 2º</th><th>Por que aparece</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<section id="caso">
+  <h2>Investigamos o caso mais extremo</h2>
+  <p>A seção 160 da zona 3 de Manoel Urbano (AC) teve a virada mais distante do resto do município em todo o país: o Lula caiu 35 pontos ali, enquanto subia cerca de 3 pontos nas outras seções da cidade. Baixamos do TSE os arquivos da urna dos dois turnos: o log de eventos, o BU e o RDV, que registra o que cada eleitor digitou, sem identificá-lo.</p>
+  <div class="scroll"><table>
+    <thead><tr><th></th><th class="n">Votaram</th><th class="n">Lula (13)</th><th class="n">Flávio (22)</th><th class="n">Nulos</th><th>Ordem das telas</th></tr></thead>
+    <tbody>
+      <tr><td>1º turno</td><td class="n">170</td><td class="n">112</td><td class="n">55</td><td class="n">3</td><td>Dep. Federal → Dep. Estadual → Senador → Senador → Governador → <b>Presidente</b></td></tr>
+      <tr><td>2º turno</td><td class="n">173</td><td class="n">48</td><td class="n">104</td><td class="n">21</td><td>Governador → <b>Presidente</b></td></tr>
+    </tbody>
+  </table></div>
+  <div class="grid">
+    <div class="card"><h3>A urna funcionou normalmente</h3><p class="small">Mesma urna física nos dois turnos (nº 02046234) e mesma mídia de carga. Urna pronta às 6h e encerrada às 15h, no horário do Acre, sem troca nem desligamento durante a votação. 79% dos eleitores foram liberados pela digital nos dois turnos, e nenhum voto veio menos de 30 segundos depois do anterior.</p></div>
+    <div class="card"><h3>20 eleitores trocaram a ordem</h3><p class="small">No 2º turno, a tela de Governador vinha antes da de Presidente. No RDV, 20 eleitores digitaram <b>13</b> na tela de Governador e <b>11</b> (número de candidato a governador) na de Presidente. Os dois votos viraram nulos. São, muito provavelmente, eleitores do Lula.</p></div>
+    <div class="card"><h3>Parte da virada é real</h3><p class="small">Mesmo devolvendo esses 20 votos ao Lula, ele fica com 68 e o Flávio com 104. O Flávio ganhou 49 votos, e só havia 6 disponíveis entre eliminados, brancos, nulos e novos votantes. Pelo menos uns 40 eleitores do Lula no 1º turno votaram no Flávio no 2º. Isso é mudança de voto, não defeito de urna.</p></div>
+  </div>
+  <h3>O mesmo efeito aparece nos estados com 2º turno para governador</h3>
+  <p id="nulos-txt"></p>
+  <div class="chart"><svg id="nulos-svg" role="img" aria-label="Votos nulos para Presidente no 2º turno, por estado"></svg>
+  <div class="legend"><span><i style="background:var(--accent)"></i>Teve 2º turno para governador</span><span><i style="background:var(--neutral)"></i>Só Presidente no 2º turno</span></div></div>
+</section>
+
+<section id="campos">
+  <h2>Campos dos Goytacazes: o Lula ficou com todo o saldo?</h2>
+  <p>Circulou a afirmação de que, em Campos dos Goytacazes (RJ), o Lula ganhou todos os nulos, brancos, abstenções e votos dos eliminados, mais mil votos do Flávio, e que a chance disso seria a de ganhar a Mega-Sena 1.300 vezes seguidas. As contas do município, para Presidente:</p>
+  <div class="scroll"><table id="cg-tab"><thead><tr><th></th><th class="n">1º turno</th><th class="n">2º turno</th><th class="n">Diferença</th></tr></thead><tbody></tbody></table></div>
+  <p id="cg-saldo"></p>
+  <div class="grid">
+    <div class="card"><h3>O saldo não mostra quem mudou</h3><p class="small">Os números são de cada seção, não de cada eleitor. O mesmo saldo aparece se eleitores do Lula foram para o Flávio, eleitores do Flávio ficaram em casa e quem votou nos eliminados se dividiu. E não havia abstenção para ganhar: menos gente votou no 2º turno.</p></div>
+    <div class="card"><h3>Eleitores não são moedas</h3><p class="small">A conta da Mega-Sena supõe que cada eleitor decide sozinho, sem relação com os vizinhos. Numa cidade, o voto muda junto: apoio de lideranças locais, campanha, notícia da semana. Com eleitores que se movem juntos, a conta de independência não vale.</p></div>
+    <div class="card"><h3>Raro, mas não único</h3><p class="small" id="cg-raro"></p></div>
+  </div>
+  <h3>A virada aconteceu em quase todas as seções</h3>
+  <p id="cg-hist-txt"></p>
+  <div class="chart"><svg id="cg-hist" role="img" aria-label="Variação por seção em Campos, Lula e Flávio"></svg>
+  <div class="legend"><span><i style="background:var(--lula)"></i>Lula</span><span><i style="background:var(--flavio)"></i>Flávio</span></div></div>
+  <h3>E nos vizinhos do Norte Fluminense</h3>
+  <p id="cg-viz-txt"></p>
+  <div class="scroll"><table id="cg-viz"><thead><tr><th>Município</th><th class="n">Votaram (1º turno)</th><th class="n">Lula</th><th class="n">Flávio</th></tr></thead><tbody></tbody></table></div>
+  <p>Fraude em urna costuma aparecer concentrada em poucas seções. Uma mudança parecida em mais de mil seções, nas quatro zonas eleitorais e em municípios vizinhos, é o padrão de eleitores mudando de voto na região. Não verificamos a causa.</p>
+</section>
+
+<section id="como-ler">
+  <h2>Como ler esta página</h2>
+  <div class="note">
+    <ul>
+      <li><b>Raro não é fraude.</b> Com quase meio milhão de seções, eventos de "1 em 100 mil" acontecem umas 5 vezes só por acaso. A pergunta certa é se aparecem mais vezes do que o esperado, e se seguem um padrão.</li>
+      <li><b>Seção pequena engana.</b> Numa seção de 30 eleitores, 5 pessoas mudando de voto viram 17 pontos percentuais. Por isso quase todos os testes exigem um mínimo de votos.</li>
+      <li><b>Toda seção listada pode ser conferida.</b> UF, município, zona e seção identificam o BU publicado pelo TSE em <a href="https://resultados.tse.jus.br" target="_blank" rel="noopener">resultados.tse.jus.br</a>, que tem assinatura digital da urna.</li>
+      <li>As faixas coloridas mostram o tipo de achado: <span class="pill ok">zero casos</span> é o resultado esperado para os testes de integridade; <span class="pill at">vale olhar</span> marca o que tem mais casos do que o esperado por acaso.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="integridade">
+  <h2>Integridade dos boletins</h2>
+  <p>Coisas que a urna não deveria permitir. O esperado é zero em todas.</p>
+  <div class="tests" id="t-integridade"></div>
+</section>
+
+<section id="extremos">
+  <h2>Resultados extremos</h2>
+  <p>Seções com resultado no limite do possível: um candidato com todos os votos, ou todos os eleitores votando.</p>
+  <div class="tests" id="t-extremos"></div>
+</section>
+
+<section id="viradas">
+  <h2>Viradas entre o 1º e o 2º turno</h2>
+  <p>Aqui cada seção é comparada com ela mesma no outro turno e com as outras seções do mesmo município.</p>
+  <div class="charts">
+    <div class="chart"><h3>Lula no 1º × Lula no 2º turno, por seção</h3><canvas id="cv-disp" width="50" height="50"></canvas><div class="small" id="disp-txt"></div></div>
+  </div>
+  <div class="tests" id="t-viradas"></div>
+</section>
+
+<section id="digitos">
+  <h2>Testes de dígitos</h2>
+  <p>Contagens de votos produzidas naturalmente seguem certos padrões nos dígitos. Números inventados à mão tendem a fugir deles. Estes testes são usados em auditorias, mas são fracos sozinhos: em contagens de seções, que têm tamanho limitado, desvios pequenos são comuns sem nenhuma manipulação.</p>
+  <h3>2º dígito (lei de Benford)</h3>
+  <div class="charts" id="c-benford"></div>
+  <h3>Último dígito (deveria ser uniforme, 10% cada)</h3>
+  <div class="charts" id="c-ultimo"></div>
+  <p class="small" id="dig-txt"></p>
+</section>
+
+<section id="fingerprint">
+  <h2>Impressão digital da eleição</h2>
+  <p>Cada ponto é uma faixa de comparecimento (eixo horizontal) e de votação do candidato (eixo vertical); quanto mais escuro, mais eleitores. Em eleições com enchimento de urna, aparece uma mancha no canto superior direito: seções com quase 100% de comparecimento e quase 100% para um candidato. O método é de Klimek et al. (2012), usado para identificar fraudes na Rússia e em Uganda.</p>
+  <div class="charts" id="c-finger"></div>
+  <p id="canto-txt"></p>
+</section>
+
+<section id="ressalvas">
+  <h2>Ressalvas e método</h2>
+  <div class="note"><ul>
+    <li>Fonte: arquivos <code>bu.dat</code> de cada seção, baixados de resultados.tse.jus.br e decodificados (ASN.1). Seções apuradas pelo Sistema de Apuração (comum no exterior) entram pelo <code>busa.dat</code>. Ficam de fora 41 seções do exterior que não foram instaladas e 3 sem nenhum votante.</li>
+    <li>"% dos válidos" exclui brancos e nulos. No 1º turno, os válidos incluem os votos de todos os candidatos.</li>
+    <li>O desvio robusto da virada usa a mediana e o desvio absoluto mediano (MAD) das seções do mesmo município, multiplicado por 0,6745 para ficar na escala de um desvio-padrão.</li>
+    <li>O "estoque" de votos disponíveis para um finalista no 2º turno é: votos dos candidatos eliminados + brancos + nulos do 1º turno + aumento de comparecimento (se houve).</li>
+    <li>Os testes de dígitos usam seções com 10+ votos (Benford) e 100+ votos (último dígito) para cada candidato. Com centenas de milhares de seções, até desvios minúsculos dão p-valor baixo; o que importa é o tamanho do desvio no gráfico.</li>
+    <li>Nenhum destes testes prova ou descarta fraude sozinho. Eles apontam onde olhar. O código está no repositório do projeto.</li>
+  </ul></div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-main">
+    <div>
+      <div class="footer-brand"><a href="index.html">Turnos</a></div>
+      <div class="footer-desc">Análise entre turnos das eleições gerais de 2026, baseada nos Boletins de Urna do TSE.</div>
+    </div>
+    <div class="footer-links">
+      <a href="index.html">1º turno</a>
+      <a href="2turno.html">2º turno</a>
+      <a href="mapa.html">Mapa</a>
+      <a href="analise.html">Análise</a>
+      <a href="anomalias.html">Anomalias</a>
+    </div>
+    <div class="footer-right">
+      Projeto por <strong><a href="https://github.com/AndreRuperto" target="_blank" rel="noopener">André Ruperto</a></strong>
+    </div>
+  </div>
+  <div class="footer-copy">© 2026 André Ruperto. <a href="https://github.com/AndreRuperto/1turno">Código aberto no GitHub</a>.</div>
+</footer>
+
+</div>
+
+<script>
+(function(){
+var fmt=new Intl.NumberFormat('pt-BR');
+var pct=function(x,d){return (x*100).toLocaleString('pt-BR',{minimumFractionDigits:d==null?1:d,maximumFractionDigits:d==null?1:d})+'%'};
+var NOMES={'13':'Lula','22':'Flávio'};
+var COR={'13':'var(--lula)','22':'var(--flavio)'};
+var COLS={
+  uf:'UF',cd_mun:'Cód. mun.',municipio:'Município',zona:'Zona',secao:'Seção',
+  eleitores_aptos_1:'Aptos 1º',comparecimento_1:'Votaram 1º','13_1':'Lula 1º','22_1':'Flávio 1º',outros_1:'Outros 1º',bn_1:'Br+Nulos 1º',
+  eleitores_aptos_2:'Aptos 2º',comparecimento_2:'Votaram 2º','13_2':'Lula 2º','22_2':'Flávio 2º',bn_2:'Br+Nulos 2º',
+  dif_aptos:'Δ aptos',dturn:'Δ comparec.',z:'Desvio',swing:'Virada Lula',med_mun:'Virada do município',
+  pl_1:'Lula % válidos 1º',pl_2:'Lula % válidos 2º',excesso_13:'Excesso',excesso_22:'Excesso',
+  ganho_13:'Ganho Lula',ganho_22:'Ganho Flávio',estoque:'Estoque',perda:'Manteve'
+};
+var PCTCOL={dturn:1,swing:1,med_mun:1,pl_1:1,pl_2:1,perda:1};
+function cell(c,v){
+  if(v==null)return '—';
+  if(PCTCOL[c])return pct(v);
+  if(c==='z')return v.toLocaleString('pt-BR',{maximumFractionDigits:1});
+  if(typeof v==='number')return fmt.format(v);
+  return v;
+}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+function renderTest(t){
+  var integ=t.grupo==='integridade';
+  var cls=integ?(t.n===0?'zero':(t.explicado?'':'alto')):'';
+  var pill=integ?(t.n===0?'<span class="pill ok">zero casos</span>':(t.explicado?'<span class="pill">explicação administrativa comum</span>':'<span class="pill at">vale olhar</span>')):'';
+  var h='<div class="test '+cls+'"><div class="test-head"><h3>'+esc(t.titulo)+' '+pill+'</h3><div class="test-n">'+fmt.format(t.n)+'<small>seç'+(t.n===1?'ão':'ões')+'</small></div></div>';
+  h+='<p>'+esc(t.desc)+'</p>';
+  if(t.esperado)h+='<div class="exp">Esperado por acaso: <b>'+(t.esperado.valor<1?t.esperado.valor.toLocaleString('pt-BR',{maximumSignificantDigits:2}):fmt.format(Math.round(t.esperado.valor)))+'</b> '+esc(t.esperado.como)+'.</div>';
+  if(t.faixas)h+='<div class="exp">Tamanho da diferença: '+Object.keys(t.faixas).map(function(k){return k+' eleitor'+(k==='±1'?'':'es')+': <b>'+fmt.format(t.faixas[k])+'</b>'}).join(' · ')+'</div>';
+  if(t.cauda)h+='<div class="exp">Para dar escala: '+Object.keys(t.cauda).map(function(k){return fmt.format(t.cauda[k])+' seções passam de '+k+' desvios'}).join(' · ')+'. A cauda cai devagar, como é comum em dados reais. Os casos acima de 8 são os mais isolados.</div>';
+  h+='<div class="why"><b>O que costuma explicar:</b> '+esc(t.explic)+'</div>';
+  if(t.exemplos&&t.exemplos.length){
+    var cols=['uf','municipio','zona','secao'].concat(t.cols);
+    h+='<details><summary>Ver '+(t.exemplos.length<t.n?'os '+t.exemplos.length+' casos mais extremos':(t.n===1?'o caso':'os '+t.n+' casos'))+'</summary><div class="scroll"><table><thead><tr>'+cols.map(function(c){return '<th'+(c.length>3&&c!=='municipio'?' class="n"':'')+'>'+esc(COLS[c]||c)+'</th>'}).join('')+'</tr></thead><tbody>';
+    t.exemplos.forEach(function(r){h+='<tr>'+cols.map(function(c){return '<td'+(typeof r[c]==='number'?' class="n"':'')+'>'+esc(cell(c,r[c]))+'</td>'}).join('')+'</tr>'});
+    h+='</tbody></table></div></details>';
+  }
+  return h+'</div>';
+}
+
+function bars(obs,esp,cor,ymax){
+  var W=300,H=150,pad=22,bw=(W-pad)/10;
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img">';
+  for(var i=0;i<10;i++){
+    var x=pad+i*bw, hgt=(H-24)*obs[i]/ymax;
+    s+='<rect x="'+(x+3)+'" y="'+(H-14-hgt)+'" width="'+(bw-6)+'" height="'+hgt+'" fill="'+cor+'" opacity=".85"><title>'+i+': '+pct(obs[i],2)+(esp?' (esperado '+pct(esp[i],2)+')':'')+'</title></rect>';
+    s+='<text class="axis" x="'+(x+bw/2)+'" y="'+(H-2)+'" text-anchor="middle">'+i+'</text>';
+  }
+  if(esp){var pts=esp.map(function(e,i){return (pad+i*bw+bw/2)+','+(H-14-(H-24)*e/ymax)}).join(' ');s+='<polyline points="'+pts+'" fill="none" stroke="var(--fg)" stroke-width="1.5" stroke-dasharray="4 3"/>';}
+  else{var y=H-14-(H-24)*.1/ymax;s+='<line x1="'+pad+'" x2="'+W+'" y1="'+y+'" y2="'+y+'" stroke="var(--fg)" stroke-width="1.5" stroke-dasharray="4 3"/>';}
+  s+='<text class="axis" x="0" y="10">'+pct(ymax,0)+'</text>';
+  return s+'</svg>';
+}
+
+function heat(cv,m,cor){
+  var B=m.length,ctx=cv.getContext('2d'),img=ctx.createImageData(B,B),mx=0,i,j;
+  for(i=0;i<B;i++)for(j=0;j<B;j++)mx=Math.max(mx,m[i][j]);
+  var rgb=cor;
+  for(i=0;i<B;i++)for(j=0;j<B;j++){
+    var v=m[i][j]?Math.pow(m[i][j]/mx,.35):0, p=((B-1-j)*B+i)*4;
+    img.data[p]=rgb[0];img.data[p+1]=rgb[1];img.data[p+2]=rgb[2];img.data[p+3]=Math.round(v*255);
+  }
+  ctx.putImageData(img,0,0);
+}
+function rgbVar(name){
+  var tmp=document.createElement('span');tmp.style.color='var('+name+')';document.body.appendChild(tmp);
+  var c=getComputedStyle(tmp).color.match(/\d+/g).map(Number);tmp.remove();return c;
+}
+
+fetch('data/anomalias.json').then(function(r){return r.json()}).then(function(D){
+  document.getElementById('h-secoes').textContent=fmt.format(D.secoes_dois_turnos);
+  var T=D.testes, integ=T.filter(function(t){return t.grupo==='integridade'});
+  var integZero=integ.filter(function(t){return t.n===0}).length;
+  var sw=T.find(function(t){return t.id==='swing_outlier'});
+  var cards=[
+    [fmt.format(D.secoes_dois_turnos),'seções comparadas nos dois turnos'],
+    [integZero+' de '+integ.length,'testes de integridade sem nenhum caso'],
+    [T.length,'testes aplicados a cada seção'],
+    [sw?fmt.format(sw.n):'—','seções com virada fora do padrão do município']
+  ];
+  document.getElementById('resumo-grid').innerHTML=cards.map(function(c){return '<div class="card"><div class="num">'+c[0]+'</div><div class="lbl">'+c[1]+'</div></div>'}).join('');
+  ['integridade','extremos','viradas'].forEach(function(g){
+    document.getElementById('t-'+g).innerHTML=T.filter(function(t){return t.grupo===g}).map(renderTest).join('');
+  });
+
+  var resumo=[];
+  integ.forEach(function(t){if(t.n>0)resumo.push(t.titulo.toLowerCase()+' ('+fmt.format(t.n)+')')});
+  document.getElementById('resumo-txt').textContent=(integZero===integ.length?'Nenhum dos testes de integridade encontrou caso algum. ':'Nos testes de integridade, os casos encontrados foram: '+resumo.join('; ')+'. Os dois têm causas administrativas comuns, detalhadas abaixo. ')+'Os achados das outras seções são estatisticamente raros, mas é preciso olhar o tamanho de cada um contra o número de seções testadas.';
+
+  // seções para conferir: excesso de ganho (todos) + virada mais isolada (top 8), sem repetir
+  var conf={}, ordem=[];
+  function add(r,motivo){var k=[r.uf,r.cd_mun,r.zona,r.secao].join('|');if(!conf[k]){conf[k]={r:r,m:[]};ordem.push(k)}conf[k].m.push(motivo)}
+  T.forEach(function(t){
+    if(t.id==='excesso_13'||t.id==='excesso_22')t.exemplos.forEach(function(r){add(r,NOMES[t.id.slice(-2)]+' ganhou '+fmt.format(r[t.id])+' votos além do disponível')});
+  });
+  var pp=function(x){return (x>=0?'+':'−')+Math.abs(x*100).toLocaleString('pt-BR',{maximumFractionDigits:1})+' p.p.'};
+  if(sw)sw.exemplos.slice(0,8).forEach(function(r){add(r,'Lula variou '+pp(r.swing)+' contra '+pp(r.med_mun)+' na seção típica do município ('+Math.abs(r.z).toLocaleString('pt-BR',{maximumFractionDigits:0})+' desvios)')});
+  ordem.forEach(function(k){var r=conf[k].r;if(r.eleitores_aptos_1!==r.eleitores_aptos_2)conf[k].m.push('aptos mudaram de '+fmt.format(r.eleitores_aptos_1)+' para '+fmt.format(r.eleitores_aptos_2))});
+  document.querySelector('#conf-tab tbody').innerHTML=ordem.map(function(k){var r=conf[k].r;
+    return '<tr><td>'+esc(r.uf.toUpperCase())+'</td><td>'+esc(r.municipio)+'</td><td>'+esc(r.zona)+'</td><td>'+esc(r.secao)+'</td>'+
+      ['comparecimento_1','13_1','22_1','comparecimento_2','13_2','22_2'].map(function(c){return '<td class="n">'+cell(c,r[c])+'</td>'}).join('')+
+      '<td>'+esc(conf[k].m.join('; '))+'</td></tr>'}).join('');
+
+  // nulos para Presidente no 2º turno, por UF
+  if(D.nulos_uf){
+    var nu=D.nulos_uf.slice().sort(function(a,b){return b.t2-a.t2});
+    var rowH=18,W=600,lab=34,H=nu.length*rowH+20,mx=Math.max.apply(null,nu.map(function(r){return r.t2}))*1.15;
+    var sx=function(v){return lab+(W-lab-50)*v/mx};
+    var s='';
+    [0,.01,.02,.03].forEach(function(t){if(t<=mx)s+='<line x1="'+sx(t)+'" x2="'+sx(t)+'" y1="0" y2="'+(H-16)+'" stroke="var(--line)"/><text class="axis" x="'+sx(t)+'" y="'+(H-4)+'" text-anchor="middle">'+pct(t,0)+'</text>'});
+    nu.forEach(function(r,i){
+      var y=i*rowH;
+      s+='<text class="axis" x="0" y="'+(y+13)+'" style="font-size:11px;fill:var(--fg)">'+r.uf.toUpperCase()+'</text>';
+      s+='<rect x="'+lab+'" y="'+(y+3)+'" width="'+(sx(r.t2)-lab)+'" height="'+(rowH-6)+'" rx="2" fill="'+(r.gov_2t?'var(--accent)':'var(--neutral)')+'"><title>'+r.uf.toUpperCase()+': '+pct(r.t2,2)+' no 2º turno ('+pct(r.t1,2)+' no 1º)</title></rect>';
+      s+='<text class="axis" x="'+(sx(r.t2)+4)+'" y="'+(y+13)+'">'+pct(r.t2,2)+'</text>';
+    });
+    var sv=document.getElementById('nulos-svg');sv.setAttribute('viewBox','0 0 '+W+' '+H);sv.innerHTML=s;
+    var g=D.nulos_grupo;
+    document.getElementById('nulos-txt').textContent='Se a troca de ordem das telas foi comum, os estados em que Governador vinha antes de Presidente no 2º turno devem ter mais votos nulos para Presidente. É o que aparece: '+pct(g.com,2)+' dos votantes anularam o voto para Presidente nos '+nu.filter(function(r){return r.gov_2t}).length+' estados com 2º turno para governador, contra '+pct(g.sem,2)+' nos outros '+nu.filter(function(r){return !r.gov_2t}).length+'. '+(function(){var k=0;while(k<nu.length&&nu[k].gov_2t)k++;return k>1?'Os '+k+' estados com mais nulos para Presidente tiveram 2º turno para governador.':''})();
+  }
+
+  // Campos dos Goytacazes
+  if(D.campos){
+    var C=D.campos,T=C.tot,sg=function(x){return (x>0?'+':x<0?'−':'')+fmt.format(Math.abs(x))};
+    var linhas=[['Lula (13)',T['13_1'],T['13_2']],['Flávio (22)',T['22_1'],T['22_2']],['Cury, Caiado, Renan, Zema e outros',T.outros_1,0],['Brancos e nulos',T.bn_1,T.bn_2],['Votaram',T.comparecimento_1,T.comparecimento_2]];
+    document.querySelector('#cg-tab tbody').innerHTML=linhas.map(function(l){return '<tr><td>'+l[0]+'</td><td class="n">'+fmt.format(l[1])+'</td><td class="n">'+(l[2]||l[0].indexOf('Cury')<0?fmt.format(l[2]):'—')+'</td><td class="n"><b>'+sg(l[2]-l[1])+'</b></td></tr>'}).join('');
+    var est=T.outros_1+(T.bn_1-T.bn_2)+(T.comparecimento_2-T.comparecimento_1);
+    document.getElementById('cg-saldo').textContent='A soma confere: '+fmt.format(T.outros_1)+' votos de eliminados + '+fmt.format(T.bn_1-T.bn_2)+' brancos e nulos a menos − '+fmt.format(T.comparecimento_1-T.comparecimento_2)+' votantes a menos = '+fmt.format(est)+'. Somando os '+fmt.format(T['22_1']-T['22_2'])+' que o Flávio perdeu, dá exatamente os '+fmt.format(T['13_2']-T['13_1'])+' que o Lula ganhou. Mas isso é o saldo líquido do município, não o caminho de cada voto.';
+    document.getElementById('cg-raro').textContent='O Flávio perdeu votos em '+fmt.format(C.mun_caiu)+' dos '+fmt.format(C.mun_total)+' municípios. Entre as '+C.grandes_total+' cidades com mais de 150 mil votantes, só '+C.grandes_caiu.length+' tiveram queda: Macapá, Campos e Boa Vista. Campos é um ponto fora da curva entre as grandes, não um caso impossível.';
+    var W=600,H=200,b=C.hist_lula.length,mx=Math.max.apply(null,C.hist_lula.concat(C.hist_flavio)),bw=(W-30)/b,s='';
+    var sx=function(v){return 30+(v+10)*bw},sy=function(n){return (H-20)*(1-n/mx)};
+    [-10,0,10,20,30].forEach(function(t){s+='<line x1="'+sx(t)+'" x2="'+sx(t)+'" y1="0" y2="'+(H-20)+'" stroke="var(--line)"'+(t===0?' stroke-width="2"':'')+'/><text class="axis" x="'+sx(t)+'" y="'+(H-6)+'" text-anchor="middle">'+(t>0?'+':t<0?'−':'')+Math.abs(t)+' p.p.</text>'});
+    [['hist_flavio','--flavio'],['hist_lula','--lula']].forEach(function(k){C[k[0]].forEach(function(n,i){if(n)s+='<rect x="'+(sx(i-10)+1)+'" y="'+sy(n)+'" width="'+(bw-2)+'" height="'+(H-20-sy(n))+'" fill="var('+k[1]+')" opacity=".75"><title>'+(i-10)+' a '+(i-9)+' p.p.: '+n+' seções</title></rect>'})});
+    var sv=document.getElementById('cg-hist');sv.setAttribute('viewBox','0 0 '+W+' '+H);sv.innerHTML=s;
+    var nb=function(x){return (x<0?'−':'')+Math.abs(x).toLocaleString('pt-BR',{maximumFractionDigits:1})};
+    document.getElementById('cg-hist-txt').textContent='Variação de cada uma das '+fmt.format(C.secoes)+' seções, em pontos percentuais dos votantes. Em 8 de cada 10 seções, o Lula subiu entre '+nb(C.q_lula[0])+' e '+nb(C.q_lula[2])+' pontos; o Flávio ficou entre '+nb(C.q_flavio[0])+' e '+(C.q_flavio[2]>0?'+':'')+nb(C.q_flavio[2])+'. Por zona eleitoral, a alta típica do Lula foi '+C.zonas.map(function(z){return '+'+nb(z.lula)+' (zona '+z.zona.replace(/^0+/,'')+')'}).join(', ')+'.';
+    var vz=C.vizinhos.slice().sort(function(a,b){return a.d22/a.comp-b.d22/b.comp}),caiu=vz.filter(function(v){return v.d22<0}).length;
+    document.querySelector('#cg-viz tbody').innerHTML=vz.map(function(v){return '<tr><td>'+esc(v.nome)+'</td><td class="n">'+fmt.format(v.comp)+'</td><td class="n">'+sg(v.d13)+'</td><td class="n">'+sg(v.d22)+'</td></tr>'}).join('');
+    document.getElementById('cg-viz-txt').textContent='O Flávio perdeu votos em '+caiu+' dos '+vz.length+' municípios do Norte Fluminense, contra '+C.rj_caiu+' dos '+C.rj_total+' no estado do Rio inteiro'+(caiu*2>=C.rj_caiu?': '+(caiu*2===C.rj_caiu?'metade':'mais da metade')+' das quedas do estado ficou nessa região.':'.');
+  }
+
+  // dispersão
+  heat(document.getElementById('cv-disp'),D.disp_lula,rgbVar('--lula'));
+  document.getElementById('disp-txt').textContent='Horizontal: % dos válidos do Lula no 1º turno · vertical: no 2º turno. Correlação entre os turnos: '+D.corr_lula.toLocaleString('pt-BR')+'. Pontos fora da faixa principal são seções que mudaram muito.';
+
+  // dígitos
+  var bk=Object.keys(D.benford), bh='', uh='', dt=[];
+  bk.forEach(function(k){
+    var c=k.split('_')[0], t=k.split('_')[1], b=D.benford[k], u=D.ultimo[k];
+    var mxb=Math.max.apply(null,b.obs.concat(b.esp))*1.15, mxu=Math.max.apply(null,u.obs.concat([.1]))*1.25;
+    var devb=Math.max.apply(null,b.obs.map(function(o,i){return Math.abs(o-b.esp[i])}));
+    var devu=Math.max.apply(null,u.obs.map(function(o){return Math.abs(o-.1)}));
+    bh+='<div class="chart"><h3>'+NOMES[c]+' · '+t+'º turno</h3>'+bars(b.obs,b.esp,COR[c],mxb)+'<div class="small">'+fmt.format(b.n)+' seções · maior desvio '+(devb*100).toLocaleString('pt-BR',{maximumFractionDigits:2})+' p.p. · χ² '+b.chi2.toLocaleString('pt-BR')+'</div></div>';
+    uh+='<div class="chart"><h3>'+NOMES[c]+' · '+t+'º turno</h3>'+bars(u.obs,null,COR[c],mxu)+'<div class="small">'+fmt.format(u.n)+' seções · maior desvio '+(devu*100).toLocaleString('pt-BR',{maximumFractionDigits:2})+' p.p. · χ² '+u.chi2.toLocaleString('pt-BR')+'</div></div>';
+  });
+  document.getElementById('c-benford').innerHTML=bh;
+  document.getElementById('c-ultimo').innerHTML=uh;
+  document.getElementById('dig-txt').textContent='Barras: o observado. Linha tracejada: o esperado. Passe o mouse numa barra para ver os valores. No último dígito, a queda suave do 0 ao 9 (cerca de 10,5% para 9,5%) é o que se espera quando quase todas as contagens ficam entre 100 e 300 votos: há um pouco mais de números terminados em dígitos baixos simplesmente porque as contagens maiores são mais raras. Manipulação costuma aparecer como picos isolados (excesso de 0 ou de 5), não como uma rampa.';
+
+  // fingerprint
+  var fh='';
+  Object.keys(D.fingerprint).forEach(function(k){
+    var c=k.split('_')[0], t=k.split('_')[1];
+    fh+='<div class="chart"><h3>'+NOMES[c]+' · '+t+'º turno</h3><canvas id="fp-'+k+'" width="50" height="50"></canvas><div class="small">Horizontal: comparecimento (0–100%) · vertical: votos em '+NOMES[c]+' sobre quem votou (0–100%)</div></div>';
+  });
+  document.getElementById('c-finger').innerHTML=fh;
+  Object.keys(D.fingerprint).forEach(function(k){heat(document.getElementById('fp-'+k),D.fingerprint[k],rgbVar(k.indexOf('13')===0?'--lula':'--flavio'))});
+  var ct=Object.keys(D.canto).map(function(k){var c=k.split('_')[0],t=k.split('_')[1];return NOMES[c]+' no '+t+'º turno: '+fmt.format(D.canto[k].secoes)+' seções ('+fmt.format(D.canto[k].votos)+' votos)'});
+  var votos2=D.nacional.comparecimento_2;
+  document.getElementById('canto-txt').textContent='Seções no canto suspeito (20+ aptos, comparecimento ≥ 95% e ≥ 95% dos votos para um candidato): '+ct.join(' · ')+'. Para comparação, o 2º turno teve '+fmt.format(votos2)+' votos ao todo.';
+}).catch(function(e){document.getElementById('resumo-txt').textContent='Não foi possível carregar os dados ('+e+').'});
+})();
+</script>
+</body></html>

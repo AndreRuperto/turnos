@@ -12,7 +12,6 @@
 <link rel="stylesheet" href="css/shared.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="js/shared.js"></script>
-<script src="js/tracker.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 /* ── Map page layout ── */
@@ -20,7 +19,7 @@ html,body{height:100%;overflow:hidden}
 body{padding:0!important;overflow:hidden;height:100vh;display:flex;flex-direction:column}
 
 .map-wrap{display:grid;grid-template-columns:1fr 340px;flex:1;overflow:hidden;min-height:0}
-#map{background:#14130f}
+#map{background:var(--bg)}
 
 .side{background:var(--surface);border-left:1px solid var(--line);overflow-y:auto;z-index:1000}
 
@@ -33,7 +32,7 @@ body{padding:0!important;overflow:hidden;height:100vh;display:flex;flex-directio
 
 /* ── National result panel ── */
 .nat{text-align:center;padding:14px;border-bottom:1px solid var(--line)}
-.nat .bdg{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:600;background:var(--lula-soft);color:var(--lula);border:1px solid var(--lula)}
+.nat .bdg{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:600;background:transparent;color:var(--lula);border:1px solid var(--lula)}
 .nat .vs{display:flex;justify-content:center;gap:24px;margin-top:12px}
 .nat .cd{text-align:center}
 .nat .cd .photo{width:48px;height:48px;border-radius:50%;object-fit:cover;margin-bottom:4px;background:var(--neutral-soft);border:2px solid var(--line)}
@@ -100,6 +99,17 @@ body{padding:0!important;overflow:hidden;height:100vh;display:flex;flex-directio
 .legend-box .lg-row:hover{background:var(--neutral-soft)}
 .legend-box .lg-row.active{outline:2px solid var(--accent);outline-offset:-1px}
 .legend-box .lg-box{width:16px;height:12px;border-radius:2px}
+.legend-box .lg-grad{margin:2px 0 8px;width:190px}
+.legend-box .lg-grad-bar{position:relative;height:10px;border-radius:3px}
+.legend-box .lg-grad-mk{position:absolute;top:-4px;width:2px;height:18px;margin-left:-1px;background:var(--fg);border-radius:1px;box-shadow:0 0 0 1px var(--surface);display:none;transition:left .15s}
+.legend-box .lg-grad-ticks{display:flex;justify-content:space-between;margin-top:3px;color:var(--muted);font-variant-numeric:tabular-nums}
+.legend-box .lg-heat{display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+.legend-box.heat-on .lg-heat{display:block}
+.legend-box .lg-heat-bar{height:8px;border-radius:3px;background:linear-gradient(90deg,#3b2a7a,#2c7fb8,#41b6c4,#a1dab4,#ffffcc)}
+.map-ctrl-btn{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:600 12px var(--sans);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.map-ctrl-btn:hover{background:var(--bg)}
+.map-ctrl-btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.map-ctrl-btn[disabled]{opacity:.6;cursor:progress}
 
 /* ── Zoom hint ── */
 .dd{position:relative}
@@ -123,7 +133,7 @@ body{padding:0!important;overflow:hidden;height:100vh;display:flex;flex-directio
 .uf-label{background:none;border:none;font-family:var(--sans);font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.7),0 0 2px rgba(0,0,0,.5);white-space:nowrap;text-align:center;line-height:1.2;pointer-events:none}
 
 /* ── Leaflet overrides (always dark map bg) ── */
-.leaflet-container{background:#14130f!important;font-family:var(--sans)!important}
+.leaflet-container{background:var(--bg)!important;font-family:var(--sans)!important}
 .leaflet-control-zoom a{background:var(--surface)!important;color:var(--fg)!important;border-color:var(--line)!important}
 .leaflet-control-zoom a:hover{background:var(--bg)!important}
 .leaflet-popup-content-wrapper{background:var(--surface);color:var(--fg);border-radius:8px;box-shadow:0 3px 14px rgba(0,0,0,.3)}
@@ -168,7 +178,17 @@ body{padding:0!important;overflow:hidden;height:100vh;display:flex;flex-directio
   .side{max-height:40vh}
   .legend-box{right:10px;bottom:80px}
   .banner{flex-wrap:wrap;gap:6px}
+  .banner .banner-ctrls{flex-wrap:wrap;flex-shrink:1;margin-left:0;width:100%}
+  .banner .search-wrap{flex:1 1 100%}
+  .banner .search-wrap input{width:100%}
 }
+
+/* ── Accessibility ── */
+.banner-ctrls{display:flex;gap:8px;margin-left:auto;flex-shrink:0;align-items:center}
+.vh{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.sr:focus-visible,.ri:focus-visible,.lg-row:focus-visible,.dd-item:focus-visible,.help-tip:focus-visible,.uf-label:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dd-item:focus{background:var(--neutral-soft)}
+.help-tip:focus-visible .help-text{display:block}
 </style>
 
 <nav class="topnav" aria-label="Navegação" style="margin:0;position:sticky;top:0;z-index:10"><div style="max-width:none"><a href="index.html" class="nav-brand" aria-label="turnos"><img class="logo-light" src="assets/logo/turnos-horizontal-claro.svg" alt="turnos" height="22"><img class="logo-dark" src="assets/logo/turnos-horizontal-escuro.svg" alt="" height="22"></a><button class="nav-arr nav-arr-l" aria-label="Anterior" hidden>&#x2039;</button><div class="nav-links"><a href="index.html">1&ordm; turno</a><a href="2turno.html">2&ordm; turno</a><a href="mapa.html" class="on">Mapa</a><a href="analise.html">An&aacute;lise</a></div><button class="nav-arr nav-arr-r" aria-label="Pr&oacute;ximo" hidden>&#x203A;</button><button class="theme-toggle" aria-label="Alternar tema" title="Alternar tema">&#x2600;</button></div></nav>
@@ -253,6 +273,10 @@ body{padding:0!important;overflow:hidden;height:100vh;display:flex;flex-directio
 
 <div class="legend-box" id="legend-box">
   <div class="lg-title">Margem de vit&oacute;ria <span class="help-tip" aria-label="Ajuda" style="width:18px;height:18px;font-size:11px">?<span class="help-text">Os tons indicam a intensidade da vitória. Cores escuras significam que o candidato teve mais de 60% dos votos naquele estado ou município. Cores claras indicam disputa mais equilibrada, abaixo de 60%.</span></span></div>
+  <div class="lg-grad">
+    <div class="lg-grad-bar" id="lg-grad-bar"><div class="lg-grad-mk" id="lg-grad-mk"></div></div>
+    <div class="lg-grad-ticks"><span>Lula +40</span><span>0</span><span>Bolsonaro +40</span></div>
+  </div>
   <div class="lg-row" data-filter="lula30"><div class="lg-box" style="background:rgb(210,40,40)"></div> Lula +30%</div>
   <div class="lg-row" data-filter="lula15"><div class="lg-box" style="background:rgb(170,35,35)"></div> Lula +15%</div>
   <div class="lg-row" data-filter="lula5"><div class="lg-box" style="background:rgb(130,30,30)"></div> Lula +5%</div>
@@ -260,6 +284,11 @@ body{padding:0!important;overflow:hidden;height:100vh;display:flex;flex-directio
   <div class="lg-row" data-filter="flavio5"><div class="lg-box" style="background:rgb(25,70,160)"></div> Bolsonaro +5%</div>
   <div class="lg-row" data-filter="flavio15"><div class="lg-box" style="background:rgb(25,85,200)"></div> Bolsonaro +15%</div>
   <div class="lg-row" data-filter="flavio30"><div class="lg-box" style="background:rgb(25,95,220)"></div> Bolsonaro +30%</div>
+  <div class="lg-heat">
+    <div class="lg-title">Densidade de eleitores</div>
+    <div class="lg-heat-bar"></div>
+    <div class="lg-grad-ticks"><span>baixa</span><span>alta</span></div>
+  </div>
 </div>
 
 <script>
@@ -507,16 +536,111 @@ const map = L.map('map', {
   preferCanvas: true
 });
 
-// Esri Dark Gray tiles
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-  maxZoom: 16
-}).addTo(map);
+// Esri Canvas tiles — follow the site theme (data-theme / prefers-color-scheme)
+const ESRI_TILES = {
+  dark:  ['World_Dark_Gray_Base',  'World_Dark_Gray_Reference'],
+  light: ['World_Light_Gray_Base', 'World_Light_Gray_Reference']
+};
+function esriUrl(name){ return 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/'+name+'/MapServer/tile/{z}/{y}/{x}'; }
+function mapIsDark(){
+  var t = document.documentElement.getAttribute('data-theme');
+  return t ? t === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+}
+let mapTheme = mapIsDark() ? 'dark' : 'light';
+const baseLayer = L.tileLayer(esriUrl(ESRI_TILES[mapTheme][0]), { maxZoom: 16 }).addTo(map);
 
 // Labels layer (on top, toggled with municipality view)
-const labelLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+const labelLayer = L.tileLayer(esriUrl(ESRI_TILES[mapTheme][1]), {
   maxZoom: 16,
   pane: 'shadowPane'
 });
+
+function syncMapTheme(){
+  var next = mapIsDark() ? 'dark' : 'light';
+  if (next === mapTheme) return;
+  mapTheme = next;
+  baseLayer.setUrl(esriUrl(ESRI_TILES[next][0]));
+  labelLayer.setUrl(esriUrl(ESRI_TILES[next][1]));
+}
+new MutationObserver(syncMapTheme).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncMapTheme);
+
+// ── Continuous margin gradient (built from elColor so it matches the fill exactly) ──
+const GRAD_MAX = 0.4; // ±40 p.p.
+(function buildMarginGradient(){
+  var stops = [], N = 10;
+  for (var i = 0; i <= N; i++) { // Lula side: +40 → 0
+    var m = GRAD_MAX * (1 - i / N);
+    stops.push(elColor(1 + m, 1 - m) + ' ' + (i / N * 50).toFixed(1) + '%');
+  }
+  for (var j = 0; j <= N; j++) { // Bolsonaro side: 0 → +40
+    var m2 = GRAD_MAX * j / N;
+    stops.push(elColor(1 - m2, 1 + m2) + ' ' + (50 + j / N * 50).toFixed(1) + '%');
+  }
+  document.getElementById('lg-grad-bar').style.background = 'linear-gradient(90deg,' + stops.join(',') + ')';
+})();
+const gradMarker = document.getElementById('lg-grad-mk');
+function showGradMarker(lula, flavio){
+  var total = lula + flavio;
+  if (!total) { gradMarker.style.display = 'none'; return; }
+  var m = Math.max(-GRAD_MAX, Math.min(GRAD_MAX, (lula - flavio) / total));
+  gradMarker.style.left = ((GRAD_MAX - m) / (2 * GRAD_MAX) * 100) + '%';
+  gradMarker.style.display = 'block';
+}
+
+// ── Heatmap: density of voters per polling place (data/locais_heat.json, built by apuracao-urnas/build_locais_heat.py) ──
+let heatLayer = null, heatOn = false;
+const HeatControl = L.Control.extend({
+  options: { position: 'topleft' },
+  onAdd: function(){
+    var b = L.DomUtil.create('button', 'map-ctrl-btn');
+    b.type = 'button';
+    b.setAttribute('aria-pressed', 'false');
+    b.title = 'Mostrar densidade de eleitores por local de votação';
+    b.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7" opacity=".6"/><circle cx="12" cy="12" r="10.5" opacity=".3"/></svg> Densidade';
+    L.DomEvent.disableClickPropagation(b);
+    L.DomEvent.on(b, 'click', function(){ toggleHeat(b); });
+    return b;
+  }
+});
+new HeatControl().addTo(map);
+
+function heatMax(){ return Math.max(0.5, 80 / Math.pow(2.5, map.getZoom() - 4)); }
+function loadScript(src){
+  return new Promise(function(res, rej){
+    var s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+function toggleHeat(btn){
+  heatOn = !heatOn;
+  btn.setAttribute('aria-pressed', String(heatOn));
+  document.getElementById('legend-box').classList.toggle('heat-on', heatOn);
+  map.getPane('overlayPane').style.opacity = heatOn ? '0.35' : '';
+  if (!heatOn) { if (heatLayer) map.removeLayer(heatLayer); return; }
+  if (heatLayer) { heatLayer.addTo(map); return; }
+  btn.disabled = true;
+  Promise.all([
+    loadScript('https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js'),
+    fetch('data/locais_heat.json').then(function(r){ return r.json(); })
+  ]).then(function(res){
+    var pts = res[1].map(function(p){ return [p[0], p[1], Math.min(1, p[3] / 4000)]; });
+    if (!map.getPane('heatPane')) { map.createPane('heatPane'); map.getPane('heatPane').style.zIndex = 450; map.getPane('heatPane').style.pointerEvents = 'none'; }
+    // maxZoom:0 disables leaflet.heat's own zoom scaling; heatMax() rescales instead,
+    // tuned so the national view (z4) and a metro view (z8) both keep contrast.
+    heatLayer = L.heatLayer(pts, {
+      pane: 'heatPane', radius: 14, blur: 16, maxZoom: 0, max: heatMax(),
+      gradient: {0.2:'#3b2a7a', 0.4:'#2c7fb8', 0.6:'#41b6c4', 0.8:'#a1dab4', 1:'#ffffcc'}
+    });
+    map.on('zoomend', function(){ if (heatLayer) heatLayer.setOptions({max: heatMax()}); });
+    if (heatOn) heatLayer.addTo(map);
+  }).catch(function(e){
+    console.error('heatmap', e);
+    heatOn = false; btn.setAttribute('aria-pressed', 'false');
+    document.getElementById('legend-box').classList.remove('heat-on');
+    map.getPane('overlayPane').style.opacity = '';
+  }).finally(function(){ btn.disabled = false; });
+}
 
 let stateLayer = null;
 let stateBordersLayer = null;
@@ -601,8 +725,9 @@ function showInfo(name, uf, lula, flavio, aptos, comp, brancos, nulos) {
     '<div class="ib-row"><span class="d">Comparecimento</span><span>'+pct(comp,aptos)+'%</span></div>' +
     '<div class="ib-row"><span class="d">Brancos/Nulos</span><span>'+fmtV(brancos)+'/'+fmtV(nulos)+'</span></div>';
   infoBox.style.display = 'block';
+  showGradMarker(lula, flavio);
 }
-function hideInfo() { infoBox.style.display = 'none'; }
+function hideInfo() { infoBox.style.display = 'none'; gradMarker.style.display = 'none'; }
 
 function showGovInfo(name, uf, g){
   var flagHtml = uf && FLAGS[uf] ? '<img class="flag" src="'+FLAGS[uf]+'" alt=""> ' : '';
@@ -678,6 +803,10 @@ function makeTooltip(uf, name, lula, flavio, total) {
 
 // ── Legend filter ──
 document.querySelectorAll('.legend-box .lg-row').forEach(function(row) {
+  row.setAttribute('role', 'button');
+  row.tabIndex = 0;
+  row.setAttribute('aria-pressed', 'false');
+  row.setAttribute('aria-label', 'Filtrar: ' + row.textContent.trim());
   row.addEventListener('click', function() {
     var f = row.dataset.filter;
     if (activeFilter === f) {
@@ -688,6 +817,7 @@ document.querySelectorAll('.legend-box .lg-row').forEach(function(row) {
       activeFilter = f;
       row.classList.add('active');
     }
+    document.querySelectorAll('.legend-box .lg-row').forEach(function(r){r.setAttribute('aria-pressed', String(r.classList.contains('active')))});
     applyFilter();
   });
 });
@@ -737,7 +867,8 @@ function buildStateLabels() {
       if (!d) continue;
       var isL = d.l > d.f;
       var wp = isL ? pct(d.l, d.v) : pct(d.f, d.v);
-      labelHtml = '<div style="font-size:13px">'+uf+'</div><div style="font-size:10px;opacity:.85">'+wp+'%</div>';
+      // winner initial so the result doesn't depend on colour alone (WCAG 1.4.1)
+      labelHtml = '<div style="font-size:13px">'+uf+'</div><div style="font-size:10px;opacity:.85">'+(isL?'L':'B')+' '+wp+'%</div>';
     }
     var icon = L.divIcon({
       className: 'uf-label',
@@ -745,10 +876,64 @@ function buildStateLabels() {
       iconSize: [60, 28],
       iconAnchor: [30, 14]
     });
-    var marker = L.marker(CENTROIDS[uf], {icon: icon, interactive: false});
+    var marker = L.marker(CENTROIDS[uf], {icon: icon, interactive: false, keyboard: true});
+    marker.on('add', makeStateLabelAccessible.bind(null, uf));
     group.addLayer(marker);
   }
   return group;
+}
+
+// ── Keyboard access ──
+// Elements with role="button" that aren't <button> get Enter/Space → click.
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  var t = e.target;
+  if (!t.matches || !t.matches('[role="button"]:not(button), [role="menuitem"]')) return;
+  e.preventDefault();
+  t.click();
+});
+function makeBtn(el, label) {
+  el.setAttribute('role', 'button');
+  el.tabIndex = 0;
+  if (label) el.setAttribute('aria-label', label);
+}
+function stateSummary(uf) {
+  if (cargoMode === 'governador') {
+    var g = D_GOV[uf];
+    return (NM[uf]||uf) + (g ? ': ' + g.w + ' eleito governador' : '');
+  }
+  var d = D_UF[uf];
+  if (!d) return NM[uf]||uf;
+  var isL = d.l > d.f;
+  return (NM[uf]||uf) + ': ' + (isL ? 'Lula' : 'Bolsonaro') + ' venceu com ' + pct(isL ? d.l : d.f, d.v) + '%';
+}
+function stateLayerFor(uf) {
+  var found = null;
+  if (stateLayer) stateLayer.eachLayer(function(l){ if (l.feature.properties.s === uf) found = l; });
+  return found;
+}
+function showStateInfo(uf) {
+  if (cargoMode === 'governador') { var g = D_GOV[uf]; if (g) showGovInfo(NM[uf]||uf, uf, g); return; }
+  var d = D_UF[uf];
+  if (d) showInfo(NM[uf]||uf, uf, d.l, d.f, d.a, d.c, d.b, d.n);
+}
+function openState(uf) {
+  var l = stateLayerFor(uf);
+  if (l) map.fitBounds(l.getBounds(), {padding: [20, 20]});
+  showStateInfo(uf);
+}
+function makeStateLabelAccessible(uf, ev) {
+  var el = ev.target.getElement();
+  if (!el || el.dataset.a11y) return;
+  el.dataset.a11y = '1';
+  makeBtn(el, stateSummary(uf) + '. Ampliar no mapa');
+  el.addEventListener('click', function(){
+    openState(uf);
+    // the label may be removed after zooming in; keep focus on the map (arrow keys pan) and the info visible
+    setTimeout(function(){ map.getContainer().focus({preventScroll: true}); showStateInfo(uf); }, 0);
+  });
+  el.addEventListener('focus', function(){ showStateInfo(uf); });
+  el.addEventListener('blur', hideInfo);
 }
 
 function addStateLabels() {
@@ -1394,17 +1579,37 @@ var currentHighlight='';
 
 fetch('data/highlights.json').then(function(r){return r.json()}).then(function(d){highlightsData=d});
 
-ddBtn.addEventListener('click',function(e){e.stopPropagation();ddEl.classList.toggle('open')});
-document.addEventListener('click',function(){ddEl.classList.remove('open')});
+var ddItems=[].slice.call(ddMenu.querySelectorAll('.dd-item'));
+ddItems.forEach(function(i){i.setAttribute('role','menuitem');i.tabIndex=-1});
+ddMenu.querySelectorAll('.dd-sep').forEach(function(s){s.setAttribute('role','separator')});
+ddMenu.querySelectorAll('.dd-label').forEach(function(s){s.setAttribute('role','presentation')});
+function ddSetOpen(open,focusFirst){
+  ddEl.classList.toggle('open',open);
+  ddBtn.setAttribute('aria-expanded',String(open));
+  if(open&&focusFirst)(ddMenu.querySelector('.dd-item.on')||ddItems[0]).focus();
+}
+ddBtn.addEventListener('click',function(e){e.stopPropagation();ddSetOpen(!ddEl.classList.contains('open'),e.detail===0)});
+ddBtn.addEventListener('keydown',function(e){if(e.key==='ArrowDown'){e.preventDefault();ddSetOpen(true,true)}});
+ddMenu.addEventListener('keydown',function(e){
+  var i=ddItems.indexOf(document.activeElement);
+  if(e.key==='ArrowDown'){e.preventDefault();ddItems[(i+1)%ddItems.length].focus()}
+  else if(e.key==='ArrowUp'){e.preventDefault();ddItems[(i-1+ddItems.length)%ddItems.length].focus()}
+  else if(e.key==='Home'){e.preventDefault();ddItems[0].focus()}
+  else if(e.key==='End'){e.preventDefault();ddItems[ddItems.length-1].focus()}
+  else if(e.key==='Escape'||e.key==='Tab'){if(e.key==='Escape')e.preventDefault();ddSetOpen(false);ddBtn.focus()}
+});
+document.addEventListener('click',function(){ddSetOpen(false)});
 ddMenu.addEventListener('click',function(e){e.stopPropagation()});
 
-ddMenu.querySelectorAll('.dd-item').forEach(function(item){
+ddItems.forEach(function(item){
   item.addEventListener('click',function(){
     var mode=this.dataset.val;
-    ddMenu.querySelectorAll('.dd-item').forEach(function(i){i.classList.remove('on')});
+    ddItems.forEach(function(i){i.classList.remove('on')});
     if(mode){this.classList.add('on');ddBtn.classList.add('active')}
     else{ddBtn.classList.remove('active')}
-    ddEl.classList.remove('open');
+    var viaKeyboard=ddMenu.contains(document.activeElement);
+    ddSetOpen(false);
+    if(viaKeyboard)ddBtn.focus();
     currentHighlight=mode;
     applyHighlight(mode);
   });
