@@ -1,0 +1,45 @@
+name: Verificar mapa público e fotos TSE
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "mapa.html"
+      - "scripts/testar-mapa-publico.cjs"
+      - ".github/workflows/testar-mapa-publico.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  teste-publico:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Instalar Playwright sem alterar o lockfile
+        run: npm install --no-save --no-package-lock playwright@1.56.1
+
+      - name: Instalar Chromium e dependências
+        run: npx playwright install --with-deps chromium
+
+      - name: Validar mapa público sem login e simular falha do TSE
+        run: node scripts/testar-mapa-publico.cjs
+        env:
+          MAPA_URL: https://1e2turnos.up.railway.app/mapa.html
+
+      - name: Guardar capturas de tela
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: teste-mapa-publico
+          path: test-results/
+          if-no-files-found: ignore
