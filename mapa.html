@@ -306,6 +306,30 @@ function imgFallback(img, label, color) {
   img.replaceWith(span);
 }
 
+// As URLs públicas do TSE podem falhar por bloqueios, indisponibilidade ou hotlink.
+// Uma falha nunca deve deixar um círculo vazio: mantém uma identificação legível.
+function fallbackTseImage(event) {
+  var img = event.target;
+  if (!img || img.tagName !== 'IMG' || !/divulgacandcontas\\.tse\\.jus\\.br/.test(img.currentSrc || img.src || '')) return;
+  var nome = (img.getAttribute('alt') || img.title || '').trim();
+  var partes = nome.split(/\\s+/).filter(Boolean);
+  var iniciais = partes.length > 1 ? partes[0][0] + partes[partes.length - 1][0] : (partes[0] || '?').slice(0, 2);
+  var rect = img.getBoundingClientRect();
+  var css = window.getComputedStyle(img);
+  var largura = Math.round(rect.width) || parseInt(css.width, 10) || 48;
+  var altura = Math.round(rect.height) || parseInt(css.height, 10) || largura;
+  var cor = css.borderTopColor || 'var(--muted)';
+  var span = document.createElement('span');
+  span.setAttribute('role', 'img');
+  span.setAttribute('aria-label', nome ? 'Foto indisponível: ' + nome : 'Foto indisponível no TSE');
+  span.title = nome || 'Foto indisponível no TSE';
+  span.textContent = iniciais.toUpperCase();
+  span.style.cssText = 'display:inline-flex;vertical-align:middle;align-items:center;justify-content:center;flex-shrink:0;box-sizing:border-box;border-radius:50%;border:2px solid '+cor+';font-family:var(--sans);font-size:11px;font-weight:700;line-height:1;color:var(--fg);background:var(--neutral-soft);width:'+largura+'px;height:'+altura+'px';
+  img.replaceWith(span);
+}
+// Captura também erros das imagens injetadas depois, nos pop-ups e na lateral.
+document.addEventListener('error', fallbackTseImage, true);
+
 // ── Election data by UF ──
 // Keys: a=aptos, c=comparecimento, v=válidos, b=brancos, n=nulos, l=lula, f=flávio
 const D_UF={
