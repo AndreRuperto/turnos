@@ -310,9 +310,9 @@ function imgFallback(img, label, color) {
 // Uma falha nunca deve deixar um círculo vazio: mantém uma identificação legível.
 function fallbackTseImage(event) {
   var img = event.target;
-  if (!img || img.tagName !== 'IMG' || !/divulgacandcontas\\.tse\\.jus\\.br/.test(img.currentSrc || img.src || '')) return;
+  if (!img || img.tagName !== 'IMG' || !/divulgacandcontas\.tse\.jus\.br/.test(img.currentSrc || img.src || '')) return;
   var nome = (img.getAttribute('alt') || img.title || '').trim();
-  var partes = nome.split(/\\s+/).filter(Boolean);
+  var partes = nome.split(/\s+/).filter(Boolean);
   var iniciais = partes.length > 1 ? partes[0][0] + partes[partes.length - 1][0] : (partes[0] || '?').slice(0, 2);
   var rect = img.getBoundingClientRect();
   var css = window.getComputedStyle(img);
