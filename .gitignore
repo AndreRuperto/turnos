@@ -2,3 +2,10 @@ node_modules/
 .claude/
 data/_*.json
 .env
+
+# dados gerados pelos scripts de BU (scripts/bu/) — ver docs/DADOS.md
+scripts/bu/dados_bu_zip/
+scripts/bu/mun_turnos.csv
+scripts/bu/transferencia.json
+scripts/bu/turnos_data.json
+__pycache__/
