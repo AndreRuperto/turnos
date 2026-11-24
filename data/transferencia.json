@@ -123,123 +123,123 @@
   },
   "model_ei": {
     "55": {
-      "to_lula": 0.5671,
-      "ci_low": 0.4266,
-      "ci_high": 0.7888,
-      "std": 0.1108,
+      "to_lula": 0.5602,
+      "ci_low": 0.4309,
+      "ci_high": 0.7947,
+      "std": 0.1094,
       "votes_total": 2605148,
       "name": "Ronaldo Caiado",
       "party": "PSD"
     },
     "70": {
-      "to_lula": 0.9958,
-      "ci_low": 0.9366,
+      "to_lula": 0.9978,
+      "ci_low": 1.0,
       "ci_high": 1.0,
-      "std": 0.0274,
+      "std": 0.0194,
       "votes_total": 3448569,
       "name": "Augusto Cury",
       "party": "Avante"
     },
     "14": {
-      "to_lula": 0.3325,
-      "ci_low": 0.0198,
-      "ci_high": 0.6885,
-      "std": 0.1831,
+      "to_lula": 0.3393,
+      "ci_low": 0.0283,
+      "ci_high": 0.7121,
+      "std": 0.1763,
       "votes_total": 2675887,
       "name": "Renan Santos",
       "party": "Missão"
     },
     "28": {
-      "to_lula": 0.9528,
+      "to_lula": 0.9322,
       "ci_low": 0.0,
       "ci_high": 1.0,
-      "std": 0.2091,
+      "std": 0.2492,
       "votes_total": 5246,
       "name": "Pablo Marçal",
       "party": "PRTB"
     },
     "30": {
-      "to_lula": 0.0039,
+      "to_lula": 0.0019,
       "ci_low": 0.0,
       "ci_high": 0.0,
-      "std": 0.0457,
+      "std": 0.031,
       "votes_total": 326488,
       "name": "Zema",
       "party": "Novo"
     },
     "80": {
-      "to_lula": 0.7506,
+      "to_lula": 0.7923,
       "ci_low": 0.0,
       "ci_high": 1.0,
-      "std": 0.4193,
+      "std": 0.393,
       "votes_total": 122911,
       "name": "Samara",
       "party": "UP"
     },
     "27": {
-      "to_lula": 0.9987,
+      "to_lula": 0.9988,
       "ci_low": 1.0,
       "ci_high": 1.0,
-      "std": 0.0182,
+      "std": 0.0159,
       "votes_total": 40043,
       "name": "Clariana Barão",
       "party": "DC"
     },
     "16": {
-      "to_lula": 0.7168,
+      "to_lula": 0.7394,
       "ci_low": 0.0,
       "ci_high": 1.0,
-      "std": 0.4467,
+      "std": 0.4341,
       "votes_total": 43103,
       "name": "Hertz Dias",
       "party": "PSTU"
     },
     "21": {
-      "to_lula": 0.9659,
+      "to_lula": 0.971,
       "ci_low": 0.0,
       "ci_high": 1.0,
-      "std": 0.1754,
+      "std": 0.165,
       "votes_total": 22693,
       "name": "Edmilson Costa",
       "party": "PCB"
     },
     "35": {
-      "to_lula": 0.8919,
+      "to_lula": 0.9159,
       "ci_low": 0.0,
       "ci_high": 1.0,
-      "std": 0.3066,
+      "std": 0.2729,
       "votes_total": 16881,
       "name": "Wilson Grassi",
       "party": "PMB"
     },
     "29": {
-      "to_lula": 0.9085,
+      "to_lula": 0.9224,
       "ci_low": 0.0,
       "ci_high": 1.0,
-      "std": 0.2863,
+      "std": 0.2645,
       "votes_total": 15024,
       "name": "Rui Costa Pimenta",
       "party": "PCO"
     },
     "brancos": {
-      "to_lula": 0.9996,
+      "to_lula": 0.9999,
       "ci_low": 1.0,
       "ci_high": 1.0,
-      "std": 0.0056,
+      "std": 0.0028,
       "votes_total": 870302
     },
     "nulos": {
-      "to_lula": 0.9866,
-      "ci_low": 0.79,
+      "to_lula": 0.9901,
+      "ci_low": 0.8422,
       "ci_high": 1.0,
-      "std": 0.0576,
+      "std": 0.0475,
       "votes_total": 945698
     },
     "novos_eleitores": {
-      "to_lula": 0.8415,
-      "ci_low": 0.5355,
+      "to_lula": 0.8361,
+      "ci_low": 0.5596,
       "ci_high": 1.0,
-      "std": 0.134,
+      "std": 0.1322,
       "votes_total": 2960241
     }
   },
@@ -878,7 +878,7 @@
   "meta": {
     "r_squared": 0.997462,
     "n_municipalities": 5715,
-    "n_bootstrap": 200,
+    "n_bootstrap": 1000,
     "description": "Ecological regression: fraction of each source's votes that went to Lula in 2T"
   }
 }
