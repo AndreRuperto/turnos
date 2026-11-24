@@ -22,7 +22,9 @@
 
 Três documentos estáticos de jornalismo de dados cobrindo os dois turnos das eleições de outubro de 2026. Sem framework, sem opinião, sem paywall. Só os números que importam.
 
-Os dados vêm de reportagens baseadas na apuração do TSE. As fontes estão listadas no rodapé de cada página. Onde divergem, a seção **Ressalvas** documenta.
+Os números de votação vêm do **Boletim de Urna publicado pelo TSE** no Portal de Dados Abertos, seção por seção. O contexto (análises, pesquisas, jurídico) vem de reportagens, listadas no rodapé de cada página. Onde divergem, a seção **Ressalvas** documenta.
+
+**Como chegar nos dados:** o passo a passo, do download dos boletins até os JSONs do site, está em [`docs/DADOS.md`](docs/DADOS.md).
 
 ---
 
@@ -100,6 +102,10 @@ turnos/
 ├── css/
 │   └── shared.css          # Design tokens, layout, componentes
 ├── data/
+│   ├── turnos_data.json    # Resultados por UF, migração e viradas (BU do TSE)
+│   ├── transferencia.json  # Regressão ecológica da transferência de votos (BU do TSE)
+│   ├── mun_geo.json        # Mapa municipal do 2º turno (IBGE + TSE)
+│   ├── zz_data.json        # Exterior no 2º turno
 │   ├── politicos.json      # 596 candidatos (dados da API Eleições.dev)
 │   └── politicos.js        # Mesmo JSON como variável JS (compatível com file://)
 ├── assets/
@@ -107,8 +113,11 @@ turnos/
 │   ├── logo/               # Horizontal claro/escuro/preto (SVG + PNG)
 │   └── simbolo/            # Ícone isolado claro/escuro/preto (SVG + PNG)
 ├── scripts/
-│   └── generate_json.py    # Script para regenerar o JSON via API
-├── docs/plans/             # Design docs e planos de implementação
+│   ├── generate_json.py    # Script para regenerar o JSON via API
+│   └── bu/                 # Pipeline dos Boletins de Urna do TSE (ver docs/DADOS.md)
+├── docs/
+│   ├── DADOS.md            # De onde vêm os dados e como regenerar
+│   └── plans/              # Design docs e planos de implementação
 └── package.json            # npm start → http-server
 ```
 
@@ -122,7 +131,7 @@ turnos/
 | Estilo | CSS custom properties, dark mode via `prefers-color-scheme` + `data-theme` |
 | Gráficos | SVG gerado por JS (cartogramas, hemiciclos, barras) |
 | Fontes | Source Serif 4 + IBM Plex Sans (Google Fonts) |
-| Dados | JSON estático pré-gerado via [Eleições.dev](https://eleicoes.dev) |
+| Dados | JSON estático pré-gerado: votação a partir do BU do TSE (Python + DuckDB), candidatos via [Eleições.dev](https://eleicoes.dev) |
 | Deploy | Railway (serve estático) |
 
 ---
@@ -138,7 +147,9 @@ turnos/
 
 ## Fontes primárias
 
-Agência Senado · Agência Brasil · Agência Câmara · Gazeta do Povo · CNN Brasil · Poder360 · Metrópoles · Jovem Pan · Forbes · O Tempo · InfoMoney · TRE-SP · Revista Oeste · O Povo · [Eleições.dev](https://eleicoes.dev) (API).
+**Votação:** [TSE — Portal de Dados Abertos, Boletim de Urna 2026](https://dadosabertos.tse.jus.br/dataset/resultados-2026-boletim-de-urna) (ver [`docs/DADOS.md`](docs/DADOS.md)).
+
+**Reportagens e contexto:** Agência Senado · Agência Brasil · Agência Câmara · Gazeta do Povo · CNN Brasil · Poder360 · Metrópoles · Jovem Pan · Forbes · O Tempo · InfoMoney · TRE-SP · Revista Oeste · O Povo · [Eleições.dev](https://eleicoes.dev) (API).
 
 Lista completa no rodapé de cada página.
 
